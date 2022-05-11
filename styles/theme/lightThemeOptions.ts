@@ -1,0 +1,21 @@
+import { ThemeOptions } from '@mui/material/styles';
+
+const lightThemeOptions: ThemeOptions = {
+    palette: {
+        mode: 'light',
+    },
+    components: {
+        // Name of the component
+        MuiButton: {
+            styleOverrides: {
+                // Name of the slot
+                root: {
+                    // Some CSS
+                    fontSize: '1rem',
+                },
+            },
+        },
+    },
+};
+
+export default lightThemeOptions;
