@@ -1,15 +1,14 @@
-import {LOGIN_BY_USERNAME, SET_LAYOUT_LANGUAGE} from "../actions/LayoutAction";
-import {actionType} from "../reduxInterfaces";
+import { LOGIN_BY_USERNAME, SET_LAYOUT_LANGUAGE, LOG_OUT } from '../actions/LayoutAction';
+import { actionType } from '../reduxInterfaces';
 
 const initialState = {
     language: 'en',
-    username:'',
-    password:'',
-    token:'',
+    username: null,
+    password: null,
+    token: null,
 };
 
-
-const sampleReducer = (state = initialState, {payload,type}:actionType) => {
+const layoutReducer = (state = initialState, { payload, type }: actionType) => {
     switch (type) {
         case SET_LAYOUT_LANGUAGE:
             return {
@@ -21,9 +20,16 @@ const sampleReducer = (state = initialState, {payload,type}:actionType) => {
                 ...state,
                 ...payload,
             };
+        case LOG_OUT:
+            return {
+                ...state,
+                username: '',
+                password: '',
+                token: '',
+            };
         default:
             return state;
     }
 };
 
-export default sampleReducer;
+export default layoutReducer;

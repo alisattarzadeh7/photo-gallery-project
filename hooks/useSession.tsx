@@ -1,10 +1,15 @@
-import type {NextPage} from 'next'
-import { useSelector } from 'react-redux'
-import {storeTypes} from "../redux/reduxInterfaces";
+import { useSelector } from 'react-redux';
+import { layoutReducerTypes } from '../Utility/interfaces';
 
 const useSession = () => {
-    const token = useSelector((state:storeTypes) => state.layout.token)
-    return token !== '';
-}
+    const username = useSelector((state:layoutReducerTypes) => state.layout.username);
+    const password = useSelector((state:layoutReducerTypes) => state.layout.password);
+    const token = useSelector((state:layoutReducerTypes) => state.layout.token);
+    return {
+        username,
+        password,
+        token,
+    };
+};
 
-export default useSession
+export default useSession;

@@ -1,3 +1,5 @@
 {
-  "hello": "hi"
+  "hello": "hi",
+  "logged in successfully": "logged in successfully",
+  "registeredSuccessfully": "Registered successfully"
 }

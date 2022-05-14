@@ -1,0 +1,15 @@
+
+.loginContainer {
+  width: 100vw;
+  height: 100vh;
+  .loginFormBox {
+    form{
+      border-radius:20px;
+      flex-direction: column;
+      display: flex;
+      justify-content: space-between;
+
+    }
+  }
+
+}

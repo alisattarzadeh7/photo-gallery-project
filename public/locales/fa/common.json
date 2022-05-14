@@ -1,3 +1,5 @@
 {
-  "hello": "salam"
+  "hello": "salam",
+  "logged in successfully": "ba movafaghiat vared shodid",
+  "registeredSuccessfully": "sabt nam ba movafaghiat anjam shod"
 }

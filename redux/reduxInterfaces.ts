@@ -1,4 +1,3 @@
-
 export interface actionType{
     type:string;
     payload:any;
@@ -7,7 +6,7 @@ export interface actionType{
 export interface loginActionParams{
     username:string;
     password:string;
-    token:string;
+    token?:string;
 }
 export interface storeTypes{
     layout:{
