@@ -1,4 +1,21 @@
 .container{
   display:flex;
   min-width: 600px;
+  flex-direction:column;
+}
+.imagesContainer{
+  display:flex;
+  flex-flow: row wrap;
+  margin-top:20px;
+  .imagesBox{
+    width:250px;
+    display:flex;
+    border: solid 1px rgba(128, 128, 128, 0.52);
+    border-radius: 10px;
+    img{
+      border-radius: 10px;
+      width:200px;
+      height:200px;
+    }
+  }
 }

@@ -1,5 +1,6 @@
 import { Api } from './__Instance';
 import AxiosInstance from './AxiosInstance';
+import photoToast from '../helpers/photoToast';
 
 export const loginWithUsername = (params: { username: string, password: string }) => Api.call({
     url: '/login',
@@ -36,12 +37,18 @@ export const addAlbum = (params?: { name: string }) => Api.call({
     showSuccess: 'added successfully',
 });
 export const addNewPic = async (params: { name: string, data:{files:any, title:string, desc:string} }) => {
-    const formData = new FormData();
-    formData.append('file', params.data.files);
-    formData.append('title', params.data.title);
-    formData.append('desc', params.data.desc);
-    const result = await AxiosInstance.post(`/album/${params.name}/pictures`, formData);
-    console.log(result);
+  try {
+      const formData = new FormData();
+      formData.append('img', params.data.files);
+      formData.append('title', params.data.title);
+      formData.append('desc', params.data.desc);
+      console.log('params.data.files : ', params.data.files);
+       await AxiosInstance.post(`/album/${params.name}/pictures`, formData);
+      return true;
+  } catch (e) {
+      photoToast(e.response.data, 'error');
+      return false;
+  }
 };
 
 export const getAlbumsSSR = (requestOptions: any) => Api.call({
@@ -66,17 +73,25 @@ export const removeAlbumByName = (name: string) => Api.call({
     showSuccess: 'deleted Successfully',
 });
 
+export const removePictureById = (id: number) => Api.call({
+    url: `/picture/${id}`,
+    method: 'delete',
+}, {
+    showErrors: true,
+    showSuccess: 'deleted Successfully',
+});
+
 export const editAlbumName = (params: { name: string, newValue:string}) => Api.call({
     url: `/album/${params.name}`,
     method: 'put',
     data: { name: params.newValue },
 }, {
     showErrors: true,
-    showSuccess: 'deleted Successfully',
+    showSuccess: 'edited Successfully',
 });
 
 export const getAlbumPictures = (name: string) => Api.call({
-    url: `/album/${name}/picture`,
+    url: `/album/${name}/pictures`,
     method: 'get',
     }, {
         returnData: true,

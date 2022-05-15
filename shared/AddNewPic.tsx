@@ -2,20 +2,27 @@ import type { NextPage } from 'next';
 import { DropzoneArea } from 'material-ui-dropzone';
 import { useState } from 'react';
 import { Button } from '@mui/material';
+import { useQueryClient } from 'react-query';
 import PhotoInput from '../components/PhotoInput';
 import { addNewPic } from '../Utility/Apis&Queries/apis';
 
 interface AddNewPicProps{
-    albumName:string
+    albumName:string,
+    modalOpen:(state:boolean)=>void
 }
 
-const AddNewPic: NextPage<AddNewPicProps> = ({ albumName }) => {
+const AddNewPic: NextPage<AddNewPicProps> = ({ albumName, modalOpen }) => {
     const [title, setTitle] = useState<string>('');
     const [desc, setDesc] = useState<string>('');
     const [files, setFiles] = useState();
+    const queryClient = useQueryClient();
 
     const handleAddNewPic = async () => {
         const result = await addNewPic({ name: albumName, data: { title, desc, files } });
+        if (result) {
+            await queryClient.invalidateQueries('getAlbumPictures');
+            modalOpen(false);
+        }
     };
 
     const handleAddPic = (files:any) => {

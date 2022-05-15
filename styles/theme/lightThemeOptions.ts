@@ -10,6 +10,13 @@ const lightThemeOptions: ThemeOptions = {
             // dark: will be calculated from palette.secondary.main,
             contrastText: '#ffcc00',
         },
+        // @ts-ignore
+        white: {
+            light: 'rgba(255,255,255,0.66)',
+            main: '#ffffff',
+            // dark: will be calculated from palette.secondary.main,
+            contrastText: '#ffcc00',
+        },
     },
     components: {
         MuiButton: {

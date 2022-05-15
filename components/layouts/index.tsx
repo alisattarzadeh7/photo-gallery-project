@@ -44,7 +44,7 @@ const index: NextPage<layoutPropsType> = ({ children }) => {
                     <div dir={isLtr ? 'ltr' : 'rtl'}>
                         <Header />
                         <div />
-                        <div style={{ height: '100vh' }}>
+                        <div style={{ minHeight: 'fit-content' }}>
                             {children}
                         </div>
                         <Footer />

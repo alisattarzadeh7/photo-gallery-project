@@ -4,6 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import 'swiper/css';
 import { useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import HomeMainSlider from '../shared/HomeMainSlider';
 import { getAlbumByName, getAlbumsSSR } from '../Utility/Apis&Queries/apis';
 import PhotoDialog from '../components/PhotoDialog';
@@ -55,11 +56,11 @@ const Home: NextPage<HomeProps> = ({ albums }) => {
             <div className="flex full-width center">
                 <h4>Galleries</h4>
             </div>
-            <Button variant="contained" onClick={handleAddNewAlbum}>add new gallery</Button>
+
             <PhotoDialog handleOpen={setOpen} open={open} title={modalProps.title}>
                 {modalProps.content}
             </PhotoDialog>
-            <div className="flex center">
+            <div className="flex center" style={{ minHeight: 200 }}>
                 {
                     albumsList && albumsList.map((item) => (
                         <div key={item.id}>
@@ -67,6 +68,8 @@ const Home: NextPage<HomeProps> = ({ albums }) => {
                         </div>
                     ))
                 }
+                &nbsp;
+                <Button variant="outlined" onClick={handleAddNewAlbum} style={{ height: 40 }}><AddIcon /></Button>
             </div>
 
         </div>

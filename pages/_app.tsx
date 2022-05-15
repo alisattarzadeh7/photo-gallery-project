@@ -23,7 +23,13 @@ const swirl = cssTransition({
 });
 
 const persistor = persistStore(store);
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+        },
+    },
+});
 const MyApp: React.FunctionComponent<AppProps> = ({ Component, pageProps }) => (
     <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>

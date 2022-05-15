@@ -1,4 +1,4 @@
-import { Button, IconButton } from '@mui/material';
+import { Button, Divider, IconButton } from '@mui/material';
 import type { NextPage } from 'next';
 import { useState } from 'react';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -7,14 +7,15 @@ import EditIcon from '@mui/icons-material/Edit';
 import styles from './HomeAlbumDetail.module.scss';
 import PhotoDialog from '../components/PhotoDialog';
 import AddNewPic from './AddNewPic';
-import { editAlbumName, removeAlbumByName } from '../Utility/Apis&Queries/apis';
+import { editAlbumName, removeAlbumByName, removePictureById } from '../Utility/Apis&Queries/apis';
 import PhotoInput from '../components/PhotoInput';
+import { useAlbumPictureList } from '../Utility/Apis&Queries/queries';
 
 interface HomeAlbumDetailProps {
     albumInfo: {
         id: number | string,
         name: string,
-        picture: any[]
+        pictures: any[]
     },
     modalOpen: (state: boolean) => void
 }
@@ -24,13 +25,24 @@ const HomeAlbumDetail: NextPage<HomeAlbumDetailProps> = ({ albumInfo, modalOpen 
     const queryClient = useQueryClient();
     const [editMode, setEditMode] = useState(false);
     const [newTitle, setNewTitle] = useState<string>(albumInfo.name);
+    const { data: pictureList } = useAlbumPictureList(albumInfo.name);
 
     const handleRemoveGallery = async () => {
         const result = await removeAlbumByName(albumInfo.name);
         if (result) {
             modalOpen(false);
             const preQueryState: any[] | any = await queryClient.getQueryData('getAlbums');
-            await queryClient.setQueryData('getAlbums', preQueryState.filter((item:typeof albumInfo) => item.name !== albumInfo.name));
+            await queryClient.setQueryData('getAlbums', preQueryState.filter((item: typeof albumInfo) => item.name !== albumInfo.name));
+        }
+    };
+
+    const handleRemovePic = async (picId:number) => {
+        const result = await removePictureById(picId);
+        if (result) {
+            const preQueryState: any[] | any = await queryClient.getQueryData(['getAlbumPictures', albumInfo.name]);
+            console.log({ ...preQueryState, results: preQueryState.results.filter((item:any) => item.id !== picId) });
+            await queryClient.setQueryData(['getAlbumPictures', albumInfo.name],
+                { ...preQueryState, results: preQueryState.results.filter((item:any) => item.id !== picId) });
         }
     };
 
@@ -42,14 +54,21 @@ const HomeAlbumDetail: NextPage<HomeAlbumDetailProps> = ({ albumInfo, modalOpen 
         if (result) {
             modalOpen(false);
             const preQueryState: any[] | any = await queryClient.getQueryData('getAlbums');
-            await queryClient.setQueryData('getAlbums', [...preQueryState.filter((item:typeof albumInfo) => item.name !== albumInfo.name), { ...albumInfo, name: newTitle }]);
+            await queryClient.setQueryData('getAlbums', [
+                ...preQueryState.filter((item: typeof albumInfo) => item.name !== albumInfo.name), {
+                    ...albumInfo,
+                    name: newTitle,
+                },
+            ]);
         }
     };
 
     return (
         <div className={styles.container}>
-            <IconButton onClick={handleRemoveGallery}><DeleteOutlineIcon color="danger" /></IconButton>
-            <IconButton onClick={() => setEditMode(!editMode)}><EditIcon color="secondary" /></IconButton>
+            <div>
+                <IconButton onClick={handleRemoveGallery}><DeleteOutlineIcon color="danger" /></IconButton>
+                <IconButton onClick={() => setEditMode(!editMode)}><EditIcon color="secondary" /></IconButton>
+            </div>
             {
                 editMode
                 && (
@@ -66,9 +85,22 @@ const HomeAlbumDetail: NextPage<HomeAlbumDetailProps> = ({ albumInfo, modalOpen 
                     </div>
                 )
             }
+            <Divider />
+            <div className={styles.imagesContainer}>
+                {
+                    pictureList && pictureList.results.map((item: any) => (
+                        <div className={styles.imagesBox}>
+                            <div className="flex middle">
+                                <IconButton onClick={() => handleRemovePic(item.id)}><DeleteOutlineIcon color="danger" /></IconButton>
+                            </div>
+                            <img key={item.id} src={item.img} />
+                        </div>
+                    ))
+                }
+            </div>
             <Button onClick={() => setOpen(true)}>new photo</Button>
             <PhotoDialog handleOpen={setOpen} open={open} title="add new Picture">
-                <AddNewPic albumName={albumInfo.name} />
+                <AddNewPic albumName={albumInfo.name} modalOpen={setOpen} />
             </PhotoDialog>
 
         </div>

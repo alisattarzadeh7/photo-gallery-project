@@ -1,5 +1,8 @@
 {
   "hello": "hi",
   "logged in successfully": "logged in successfully",
-  "registeredSuccessfully": "Registered successfully"
+  "registeredSuccessfully": "Registered successfully",
+  "register": "register",
+  "login": "login",
+  "footer": "this is footer"
 }
