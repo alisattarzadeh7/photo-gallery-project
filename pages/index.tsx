@@ -3,19 +3,51 @@ import type { NextPage } from 'next';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import 'swiper/css';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import HomeMainSlider from '../shared/HomeMainSlider';
 import { getAlbumByName, getAlbumsSSR } from '../Utility/Apis&Queries/apis';
 import PhotoDialog from '../components/PhotoDialog';
+import { useAlbums } from '../Utility/Apis&Queries/queries';
+import HomeAddNewAlbum from '../shared/HomeAddNewAlbum';
+import HomeAlbumDetail from '../shared/HomeAlbumDetail';
 
 interface HomeProps {
     albums: any[]
 }
 
+interface modalProps {
+    content: any,
+    title: string
+}
+
 const Home: NextPage<HomeProps> = ({ albums }) => {
-    const newGalleryRef = useRef();
     const [open, setOpen] = useState(false);
     const { t } = useTranslation('common');
+    const [modalProps, setModalProps] = useState<modalProps>({
+        content: '',
+        title: '',
+    });
+    const { data: albumsList } = useAlbums({
+        initialData: albums,
+    });
+
+    const handleShowAlbumDetail = async (item) => {
+        const result = await getAlbumByName(item.name);
+        if (result) {
+            setModalProps({
+                title: `galley ${item.name}`,
+                content: <HomeAlbumDetail albumInfo={result} modalOpen={setOpen} />,
+            });
+            setOpen(true);
+        }
+    };
+    const handleAddNewAlbum = () => {
+        setOpen(true);
+        setModalProps({
+            title: 'add new Gallery',
+            content: <HomeAddNewAlbum />,
+        });
+    };
 
     return (
         <div>
@@ -23,15 +55,15 @@ const Home: NextPage<HomeProps> = ({ albums }) => {
             <div className="flex full-width center">
                 <h4>Galleries</h4>
             </div>
-            <Button variant="contained" onClick={() => setOpen(true)}>add new gallery</Button>
-            <PhotoDialog ref={newGalleryRef} handleOpen={setOpen} open={open} title="add new Gallery">
-                hiii
+            <Button variant="contained" onClick={handleAddNewAlbum}>add new gallery</Button>
+            <PhotoDialog handleOpen={setOpen} open={open} title={modalProps.title}>
+                {modalProps.content}
             </PhotoDialog>
             <div className="flex center">
                 {
-                    albums.map((item) => (
+                    albumsList && albumsList.map((item) => (
                         <div key={item.id}>
-                           <Button onClick={async () => await getAlbumByName(item.name)}>{item.name}</Button>
+                            <Button onClick={() => handleShowAlbumDetail(item)}>{item.name}</Button>
                         </div>
                     ))
                 }
@@ -50,6 +82,7 @@ export async function getServerSideProps({ locale, req }: any) {
             password: req.cookies.password,
         },
     });
+
     return { props: { albums, ...await serverSideTranslations(locale, ['common']) } };
 }
 

@@ -1,4 +1,5 @@
 import { Api } from './__Instance';
+import AxiosInstance from './AxiosInstance';
 
 export const loginWithUsername = (params: { username: string, password: string }) => Api.call({
     url: '/login',
@@ -23,18 +24,25 @@ export const getAlbums = () => Api.call({
     url: '/albums',
     method: 'get',
 }, {
-    showErrors: true,
-    showSuccess: 'registeredSuccessfully',
+    returnData: true,
 });
 
 export const addAlbum = (params?: { name: string }) => Api.call({
     url: '/albums',
-    data: { name: 'actors' },
+    data: params,
     method: 'post',
 }, {
     showErrors: true,
-    showSuccess: 'registeredSuccessfully',
+    showSuccess: 'added successfully',
 });
+export const addNewPic = async (params: { name: string, data:{files:any, title:string, desc:string} }) => {
+    const formData = new FormData();
+    formData.append('file', params.data.files);
+    formData.append('title', params.data.title);
+    formData.append('desc', params.data.desc);
+    const result = await AxiosInstance.post(`/album/${params.name}/pictures`, formData);
+    console.log(result);
+};
 
 export const getAlbumsSSR = (requestOptions: any) => Api.call({
     url: '/albums',
@@ -49,6 +57,22 @@ export const getAlbumByName = (name: string) => Api.call({
     method: 'get',
 }, {
     returnData: true,
+});
+export const removeAlbumByName = (name: string) => Api.call({
+    url: `/album/${name}`,
+    method: 'delete',
+}, {
+    showErrors: true,
+    showSuccess: 'deleted Successfully',
+});
+
+export const editAlbumName = (params: { name: string, newValue:string}) => Api.call({
+    url: `/album/${params.name}`,
+    method: 'put',
+    data: { name: params.newValue },
+}, {
+    showErrors: true,
+    showSuccess: 'deleted Successfully',
 });
 
 export const getAlbumPictures = (name: string) => Api.call({
